@@ -1,3 +1,7 @@
+from models.pelicula import Pelicula
+from models.sala import Sala
+from models.sesion import Sesion
+from models.pelicula import Pelicula
 
 class CineService : 
     def __init__(self) -> None :

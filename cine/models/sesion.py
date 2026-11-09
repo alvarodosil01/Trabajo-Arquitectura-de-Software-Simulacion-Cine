@@ -20,8 +20,11 @@ class Sesion :
         #     return True
         return butaca not in self.butacas_ocupadas 
     
-    def ocupar_butaca(self, butaca: list[str]) -> None : 
-        
+    def ocupar_butacas(self, butacas: list[str]) -> None : 
+        for b in butacas : 
+            self.butacas_ocupadas.add(b)
     
-        
+    def __str__(self) -> str:
+        ocupadas = ", ".join(sorted(self.butacas_ocupadas))
+        return f"Sesión {self.fecha} - {self.precio}€ - Ocupadas: {ocupadas}"
    
