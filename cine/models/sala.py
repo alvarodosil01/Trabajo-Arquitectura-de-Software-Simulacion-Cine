@@ -1,7 +1,7 @@
 import uuid 
 
 class Sala : 
-    def __init__(self, numero : int, filas : int, columnas : int):
+    def __init__(self, numero : int, filas : int, columnas : int) -> None:
         self.id : str = str(uuid.uuid4())
         self.numero : int = numero
         self.filas : int = filas
@@ -10,7 +10,7 @@ class Sala :
     def aforo(self) -> int : 
         return self.filas * self.columnas
     
-    def butacas(self) -> int : 
+    def butacas(self) -> list[str] : 
         resultado: list[str] = []
         for f in range(self.filas) :
             for c in range(self.columnas) : 
