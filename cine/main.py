@@ -1,6 +1,7 @@
 from models.pelicula import Pelicula
 from models.sala import Sala
 from models.sesion import Sesion
+from services.cine_service import CineService
 from datetime import datetime
 
 # pelicula = Pelicula("La Bola Negra", 150, "Drama")
@@ -15,8 +16,12 @@ from datetime import datetime
 # sitio.butacas_ocupadas.append('A2')
 # print(sitio.butaca_libre('A2'))
 
-s = Sesion("p1", "sala1", datetime(2026, 11, 14, 21, 0), 8.0)
-s.ocupar_butacas(["A5", "A6"])
-print(s)
+# s = Sesion("p1", "sala1", datetime(2026, 11, 14, 21, 0), 8.0)
+# s.ocupar_butacas(["A5", "A6"])
+# print(s)
+
+x = CineService()
+x.agregar_pelicula("La Bola Negra")
+print(x.peliculas)
 
 
