@@ -20,8 +20,16 @@ from datetime import datetime
 # s.ocupar_butacas(["A5", "A6"])
 # print(s)
 
-x = CineService()
-x.agregar_pelicula("La Bola Negra")
-print(x.peliculas)
+# p = Pelicula("LQSA", 120, "Comedia")
+# print(p.id)
 
+# cine = CineService()
+# p = cine.agregar_pelicula(Pelicula("La Bola Negra", 120, "Comedia"))
+# print(cine.peliculas)
 
+cine = CineService()
+print(len(cine.salas))
+
+# cine = CineService()
+# un_id = list(cine.salas.keys())[0]   # coge la primera etiqueta que haya
+# print(cine.salas[un_id].filas)
