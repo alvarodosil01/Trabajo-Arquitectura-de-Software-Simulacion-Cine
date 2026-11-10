@@ -18,14 +18,23 @@ class CineService :
         self.salas: dict[str, Sala] = {}
         self.sesiones: dict[str, Sesion] = {}
         self.reservas: dict[str, Reserva] = {}
-        self.cargar_salas()
+        self._cargar_salas() # esa _ es una convención, ya que es una función que se llama de forma interna
         
     def agregar_pelicula(self, peli: Pelicula) -> Pelicula:
         self.peliculas[peli.id] = peli
         return peli
     
-    def cargar_salas(self) -> None : 
-        for n, c, f in SALAS_INICIALES : 
-            sala = Sala(n,c,f) 
+    def _cargar_salas(self) -> None : 
+        for numero, filas, columnas in SALAS_INICIALES : 
+            sala = Sala(numero, filas, columnas) 
             self.salas[sala.id] = sala
     
+    def crear_sesion(self, pelicula_id: str, sala_id: str, fecha: datetime, precio: float, ) -> Sesion : 
+        if pelicula_id not in self.peliculas:
+            raise ValueError("La película no existe")
+        if sala_id not in self.salas:
+            raise ValueError("La sala no existe")
+        sesion = Sesion(pelicula_id, sala_id, fecha, precio)
+        self.sesiones[sesion.id] = sesion
+        return sesion
+        

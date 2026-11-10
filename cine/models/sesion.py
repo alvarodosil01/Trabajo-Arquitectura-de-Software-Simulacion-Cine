@@ -26,5 +26,5 @@ class Sesion :
     
     def __str__(self) -> str:
         ocupadas = ", ".join(sorted(self.butacas_ocupadas))
-        return f"Sesión {self.fecha} - {self.precio}€ - Ocupadas: {ocupadas}"
+        return f"Sesión : {self.fecha} - {self.precio}€ - Ocupadas: {ocupadas}"
    
