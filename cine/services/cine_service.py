@@ -1,8 +1,8 @@
-from models.pelicula import Pelicula
-from models.sala import Sala
-from models.sesion import Sesion
-from models.cliente import Cliente
-from models.reserva import Reserva
+from cine.models.pelicula import Pelicula
+from cine.models.sala import Sala
+from cine.models.sesion import Sesion
+from cine.models.cliente import Cliente
+from cine.models.reserva import Reserva
 from datetime import datetime, timedelta
 
 SALAS_INICIALES: list[tuple[int, int, int]] = [ # las salas son fijas. no tiene sentido cambiarlas
@@ -87,5 +87,3 @@ class CineService :
         
         self.reservas[reserva.id] = reserva
         return reserva
-        
-            
