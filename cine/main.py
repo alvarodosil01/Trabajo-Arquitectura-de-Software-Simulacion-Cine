@@ -34,12 +34,26 @@ from datetime import datetime
 # un_id = list(cine.salas.keys())[0]   # coge la primera etiqueta que haya
 # print(cine.salas[un_id].filas)
 
-cine = CineService()
-p = cine.agregar_pelicula(Pelicula("La Bola Negra", 120, "Comedia"))
-sala_id = list(cine.salas.keys())[0]
-sesion1 = cine.crear_sesion(p.id, sala_id, datetime(2026, 11, 14, 21, 0), 8.50)
-# sesion1.ocupar_butacas('A2')
-# print(sesion1)
+# cine = CineService()
+# p = cine.agregar_pelicula(Pelicula("La Bola Negra", 120, "Comedia"))
+# sala_id = list(cine.salas.keys())[0]
+# sesion1 = cine.crear_sesion(p.id, sala_id, datetime(2026, 11, 14, 21, 0), 8.50)
+# # sesion1.ocupar_butacas('A2')
+# # print(sesion1)
 
-# cine.crear_reserva(sesion1.id, ['A3', 'A3'], 'ana@mail.com', 'Ana')   # duplicadas
-cine.crear_reserva(sesion1.id, [], 'ana@mail.com', 'Ana')             # vacía
+# # cine.crear_reserva(sesion1.id, ['A3', 'A3'], 'ana@mail.com', 'Ana')   # duplicadas
+# a = cine.crear_reserva(sesion1.id, ['A1'], 'ana@mail.com', 'Ana')             # vacía
+
+# b = cine.butacas_disponibles(sesion1.id)
+
+# for i in cine.listar_salas() : 
+#     print(i.aforo())
+
+cine = CineService()
+sala = cine.listar_salas()[0]
+p = Pelicula("Interstellar", 169, "Ciencia ficción")
+cine.agregar_pelicula(p)
+s = cine.crear_sesion(p.id, sala.id, datetime(2026, 12, 1, 20, 0), 8.5)
+
+s.ocupar_butacas(["A1", "A2"])
+print(len(cine.butacas_disponibles(s.id)), "A1" in cine.butacas_disponibles(s.id))

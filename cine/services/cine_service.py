@@ -75,4 +75,31 @@ class CineService :
         self.reservas[reserva.id] = reserva
         return reserva
         
-            
+    def listar_peliculas(self) -> list[Pelicula] : 
+        return list(self.peliculas.values())
+    
+    def listar_salas(self) -> list[Sala] : 
+        return list(self.salas.values())
+
+    def listar_sesiones(self) -> list[Sesion] : 
+        return list(self.sesiones.values())
+
+    def listar_reservas(self) -> list[Reserva] : 
+        return list(self.reservas.values())
+
+    def butacas_disponibles(self, sesion_id) -> list[str] :
+        if sesion_id not in self.sesiones:
+            raise ValueError('Esta sesión no existe')
+        sesion = self.sesiones[sesion_id]
+        sala = self.salas[sesion.sala_id]
+        todas = sala.butacas()
+        return [b for b in todas if b not in sesion.butacas_ocupadas]
+    
+    def reservas_por_email(self, email) :
+        if email not in self.clientes[email] : 
+            return []
+        cliente = self.clientes[email]
+        return [r for r in self.reservas.values() if r.cliente_id == cliente.id]
+    
+    
+    # MÉTODO ELIMINAR PELÍCULA
