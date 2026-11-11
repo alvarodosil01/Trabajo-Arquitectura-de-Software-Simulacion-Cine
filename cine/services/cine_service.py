@@ -3,7 +3,7 @@ from models.sala import Sala
 from models.sesion import Sesion
 from models.cliente import Cliente
 from models.reserva import Reserva
-from datetime import datetime
+from datetime import datetime, timedelta
 
 SALAS_INICIALES: list[tuple[int, int, int]] = [ # las salas son fijas. no tiene sentido cambiarlas
     (1,8,6),        # nº de sala, filas, columnas
@@ -34,6 +34,19 @@ class CineService :
             raise ValueError("La película no existe")
         if sala_id not in self.salas:
             raise ValueError("La sala no existe")
+        if not isinstance(fecha, datetime) or fecha <= datetime.now():
+            raise ValueError("La fecha de la sesión debe ser futura")
+        if isinstance(precio, bool) or not isinstance(precio, (int, float)) or not 0 < precio < float('inf'):
+            raise ValueError("El precio debe ser positivo y finito")
+        nueva_fin = fecha + timedelta(minutes=self.peliculas[pelicula_id].duracion)
+        for existente in self.sesiones.values():
+            if existente.sala_id != sala_id:
+                continue
+            fin_existente = existente.fecha + timedelta(
+                minutes=self.peliculas[existente.pelicula_id].duracion
+            )
+            if fecha < fin_existente and existente.fecha < nueva_fin:
+                raise ValueError("La sala ya tiene una sesión en ese horario")
         sesion = Sesion(pelicula_id, sala_id, fecha, precio)
         self.sesiones[sesion.id] = sesion
         return sesion
