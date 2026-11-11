@@ -29,7 +29,7 @@ class CineService :
             sala = Sala(numero, filas, columnas) 
             self.salas[sala.id] = sala
     
-    def crear_sesion(self, pelicula_id: str, sala_id: str, fecha: datetime, precio: float, ) -> Sesion : 
+    def crear_sesion(self, pelicula_id: str, sala_id: str, fecha: datetime, precio: float) -> Sesion : 
         if pelicula_id not in self.peliculas:
             raise ValueError("La película no existe")
         if sala_id not in self.salas:
@@ -37,4 +37,42 @@ class CineService :
         sesion = Sesion(pelicula_id, sala_id, fecha, precio)
         self.sesiones[sesion.id] = sesion
         return sesion
+    
+    def crear_reserva(self, sesion_id: str, butacas: list[str], email: str, nombre: str) -> Reserva : 
         
+        # validar sesión
+        
+        if sesion_id not in self.sesiones : 
+            raise ValueError('La Sesión no existe')
+        sesion = self.sesiones[sesion_id] 
+
+        # validar butacas
+        
+        if not butacas: # por si no se escoge ninguna butaca
+            raise ValueError('Debes elegir al menos 1 butaca') 
+        if len(butacas) != len(set(butacas)): # por si se escoge más de 1 vez la misma butaca
+            raise ValueError('Hay butacas duplicadas') 
+        
+        butaca_valida = self.salas[sesion.sala_id].butacas()
+        for b in butacas : 
+            if b not in butaca_valida : 
+                raise ValueError(f'La butaca {b} no existe')
+            if not sesion.butaca_libre(b) : 
+                raise ValueError(f'La butaca {b} está ocupada')
+            
+        # validar cliente : reutilizar o crear    
+            
+        if email not in self.clientes:
+            self.clientes[email] = Cliente(nombre, email)
+        cliente = self.clientes[email]
+        
+        # Crear reserva, ocupar butaca, guardar y devolver
+        
+        total = sesion.precio*len(butacas) 
+        reserva = Reserva(cliente_id=cliente.id, sesion_id=sesion.id, precio_total=total, butacas_reservadas=butacas)
+        sesion.ocupar_butacas(butacas)
+        
+        self.reservas[reserva.id] = reserva
+        return reserva
+        
+            
