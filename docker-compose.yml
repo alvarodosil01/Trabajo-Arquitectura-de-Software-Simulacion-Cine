@@ -1,0 +1,33 @@
+# Arranque: docker compose up --build
+# Documentación de la API: http://localhost:8000/docs
+#
+# Los secretos se leen de backend/.env (copia backend/.env.example y rellénalo).
+# Ese fichero está en .gitignore y en .dockerignore: no se sube a GitHub ni
+# queda dentro de la imagen; Docker solo lo pasa al contenedor al arrancar.
+
+services:
+  backend:
+    build:
+      context: ./backend
+    image: cine-backend
+    container_name: cine-backend
+    ports:
+      - "8000:8000"
+    # Variables de autenticación JWT que se cargan desde backend/.env:
+    #   JWT_SECRET          secreto de firma (mínimo 32 caracteres)
+    #   JWT_EXPIRE_MINUTES  validez del token en minutos (60 por defecto)
+    #   ADMIN_NOMBRE, ADMIN_EMAIL, ADMIN_PASSWORD  primer administrador
+    env_file:
+      - path: ./backend/.env
+        required: false  # sin él arranca, pero sin administrador y con un secreto temporal
+    environment:
+      # Ruta absoluta dentro del contenedor (cuatro barras), apuntando al volumen
+      DATABASE_URL: sqlite:////app/data/cine.db
+    volumes:
+      - cine-data:/app/data
+    restart: unless-stopped
+
+  # Cuando exista el frontend se añadirá aquí como otro servicio (por ejemplo, nginx).
+
+volumes:
+  cine-data:

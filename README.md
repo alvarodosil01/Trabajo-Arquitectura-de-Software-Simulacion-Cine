@@ -36,6 +36,35 @@ y arráncalo de nuevo desde backend/.
 Abre **http://127.0.0.1:8000/docs**. En cada operación selecciona **Try it out**,
 rellena los campos y pulsa **Execute**. Detén el servidor con `Ctrl+C`.
 
+## Ejecución con Docker
+
+Alternativa a la instalación anterior: no necesitas Python, solo Docker Desktop
+abierto. Desde la raíz del proyecto:
+
+```powershell
+docker compose up --build
+```
+
+La API queda en **http://localhost:8000/docs**. Para pararla, `Ctrl+C` o
+`docker compose down`.
+
+- La imagen se construye con `backend/Dockerfile` (Python 3.12 slim). Copia
+  primero `requirements.txt` para aprovechar la caché de capas y se ejecuta con
+  un usuario sin privilegios.
+- La base SQLite se guarda en el volumen `cine-data`, montado en `/app/data`.
+  Los datos se conservan aunque se reconstruya o se elimine el contenedor.
+- La ruta de la base se pasa con la variable de entorno `DATABASE_URL`, definida
+  en `docker-compose.yml`; no hay configuración ni secretos dentro de la imagen.
+- Los secretos de la autenticación JWT (`JWT_SECRET`, `JWT_EXPIRE_MINUTES`,
+  `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NOMBRE`) se leen de `backend/.env`.
+  Antes del primer arranque, copia `backend/.env.example` como `backend/.env` y
+  rellénalo. Ese fichero no se sube a Git ni entra en la imagen. Sin él la API
+  arranca igual, pero sin administrador y con un secreto temporal.
+- `backend/.dockerignore` deja fuera de la imagen el entorno virtual, la caché
+  de Python y la base local.
+
+Para borrar también los datos guardados: `docker compose down -v`.
+
 ## Primera prueba manual
 
 1. Ejecuta `GET /salas` y copia el `id` de una sala. Las tres salas fijas se crean
@@ -148,8 +177,11 @@ backend/
   cine/                Modelos y reglas de negocio del cine
   data/                Base SQLite local (ignorada por Git)
   requirements.txt     Dependencias con versiones fijadas
+  Dockerfile           Imagen del backend
+  .dockerignore        Archivos excluidos de la imagen
 frontend/
   .gitkeep             Mantiene la carpeta en Git hasta crear la interfaz
+docker-compose.yml     Arranque del backend con su volumen de datos
 README.md
 .gitignore
 ```

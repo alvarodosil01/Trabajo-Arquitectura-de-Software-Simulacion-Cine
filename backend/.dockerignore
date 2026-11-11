@@ -1,0 +1,15 @@
+# Lo que no debe entrar en la imagen
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.pytest_cache/
+tests/
+Dockerfile
+.dockerignore
