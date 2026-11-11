@@ -1,10 +1,12 @@
 from cine.models.pelicula import Pelicula
 from cine.models.sala import Sala
 from cine.models.sesion import Sesion
-from cine.models.cliente import Cliente
+from cine.models.usuario import Administrador, Cliente, hash_password, verify_password
 from cine.models.reserva import Reserva
 from datetime import datetime, timedelta
 from cine.services.errors import ConflictError, NotFoundError
+
+_HASH_FICTICIO = hash_password('contraseña-que-nunca-coincide')
 
 SALAS_INICIALES: list[tuple[int, int, int]] = [ # las salas son fijas. no tiene sentido cambiarlas
     (1,8,6),        # nº de sala, filas, columnas
@@ -15,6 +17,7 @@ SALAS_INICIALES: list[tuple[int, int, int]] = [ # las salas son fijas. no tiene 
 class CineService : 
     def __init__(self) -> None :
         self.clientes: dict[str, Cliente] = {}  # clave : email, el resto usan el id como clave
+        self.administradores: dict[str, Administrador] = {}  # clave : email
         self.peliculas: dict[str, Pelicula]  = {}
         self.salas: dict[str, Sala] = {}
         self.sesiones: dict[str, Sesion] = {}
@@ -153,3 +156,37 @@ class CineService :
         nueva.id = sesion_id
         self.sesiones[sesion_id] = nueva
         return nueva
+
+    # ADMINISTRADORES
+
+    PASSWORD_MINIMA = 8
+
+    def registrar_administrador(self, nombre: str, email: str, password: str) -> Administrador:
+        email = email.strip().lower()
+        nombre = nombre.strip()
+        if not nombre or '@' not in email:
+            raise ValueError('Nombre y email del administrador son obligatorios')
+        if len(password) < self.PASSWORD_MINIMA:
+            raise ValueError(f'La contraseña debe tener al menos {self.PASSWORD_MINIMA} caracteres')
+        if email in self.administradores:
+            raise ConflictError('Ya existe un administrador con ese email')
+        admin = Administrador(nombre, email, password)
+        self.administradores[email] = admin
+        return admin
+
+    def autenticar_administrador(self, email: str, password: str) -> Administrador | None:
+        """Devuelve el administrador si las credenciales son correctas; si no, None.
+
+        No distingue entre "email no existe" y "contraseña incorrecta" para no
+        revelar qué cuentas existen.
+        """
+        admin = self.administradores.get(email.strip().lower())
+        if admin is None:
+            # Se calcula un hash igualmente para que el tiempo de respuesta no
+            # delate si el email existe o no.
+            verify_password(password, _HASH_FICTICIO)
+            return None
+        return admin if admin.verificar_password(password) else None
+
+    def obtener_administrador(self, admin_id: str) -> Administrador | None:
+        return next((a for a in self.administradores.values() if a.id == admin_id), None)

@@ -38,3 +38,24 @@ def initialize_database(engine):
     Base.metadata.create_all(engine)
     with Session(engine) as db, db.begin():
         save_service(db, load_service(db))
+
+
+def crear_admin_inicial(engine, email: str | None, password: str | None,
+                        nombre: str = "Administrador") -> bool:
+    """Crea el primer administrador a partir de ADMIN_EMAIL y ADMIN_PASSWORD.
+
+    Así ninguna contraseña queda escrita en el código. Si el administrador ya
+    existe no se modifica. Devuelve True si se ha creado.
+    """
+    from sqlalchemy.orm import Session
+    from app.crud import load_service, save_service
+
+    if not email or not password:
+        return False
+    with Session(engine) as db, db.begin():
+        service = load_service(db)
+        if email.strip().lower() in service.administradores:
+            return False
+        service.registrar_administrador(nombre, email, password)
+        save_service(db, service)
+    return True

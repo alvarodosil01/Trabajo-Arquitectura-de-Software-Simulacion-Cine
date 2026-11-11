@@ -31,6 +31,14 @@ class ClienteDB(Base):
     email = Column(String, nullable=False, unique=True)
 
 
+class AdministradorDB(Base):
+    __tablename__ = "administradores"
+    id = Column(String, primary_key=True)
+    nombre = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    password_hash = Column(String, nullable=False)
+
+
 class SesionDB(Base):
     __tablename__ = "sesiones"
     id = Column(String, primary_key=True)

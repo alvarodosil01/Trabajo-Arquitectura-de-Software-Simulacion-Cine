@@ -8,9 +8,10 @@ misma butaca libre a la vez. No se mantiene una caché global del dominio.
 from sqlalchemy import delete, select
 
 from app.models import (
-    ButacaReservadaDB, ClienteDB, PeliculaDB, ReservaDB, SalaDB, SesionDB,
+    AdministradorDB, ButacaReservadaDB, ClienteDB, PeliculaDB, ReservaDB, SalaDB,
+    SesionDB,
 )
-from cine.models.cliente import Cliente
+from cine.models.usuario import Administrador, Cliente
 from cine.models.pelicula import Pelicula
 from cine.models.reserva import Reserva
 from cine.models.sala import Sala
@@ -22,6 +23,7 @@ MAPPINGS = (
     ("salas", SalaDB, Sala),
     ("peliculas", PeliculaDB, Pelicula),
     ("clientes", ClienteDB, Cliente),
+    ("administradores", AdministradorDB, Administrador),
     ("sesiones", SesionDB, Sesion),
     ("reservas", ReservaDB, Reserva),
 )
@@ -40,7 +42,8 @@ def load_service(db):
                 setattr(obj, column.name, getattr(row, column.name))
             if attribute == "sesiones":
                 obj.butacas_ocupadas = set()
-            values[obj.email if attribute == "clientes" else obj.id] = obj
+            # Clientes y administradores se indexan por email; el resto, por id.
+            values[obj.email if attribute in {"clientes", "administradores"} else obj.id] = obj
         setattr(service, attribute, values)
     for reserva in service.reservas.values():
         service.sesiones[reserva.sesion_id].ocupar_butacas(reserva.butacas_reservadas)
