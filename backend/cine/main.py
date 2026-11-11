@@ -1,4 +1,4 @@
-﻿"""Demostración manual del dominio: python -m cine.main desde la raíz."""
+"""Demostración manual del dominio: python -m cine.main desde backend/."""
 
 from datetime import datetime, timedelta
 

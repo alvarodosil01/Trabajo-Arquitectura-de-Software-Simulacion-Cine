@@ -19,13 +19,19 @@ Necesitas Python 3.12 o superior. Desde la raíz del proyecto, en PowerShell:
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
+.\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
+cd backend
+..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
 Si utilizas otra versión compatible, sustituye `py -3.12` por el comando de tu
 instalación, por ejemplo `python`. No hace falta activar el entorno virtual.
 Si el lanzador indica que no hay Python instalado, instala Python antes de empezar.
+
+El entorno virtual existente se conserva en la raíz para no romper sus rutas y no
+se sube a Git. Si ya está instalado, ejecuta solo los dos últimos comandos.
+Si tenías el servidor abierto antes de mover las carpetas, detenlo con Ctrl+C
+y arráncalo de nuevo desde backend/.
 
 Abre **http://127.0.0.1:8000/docs**. En cada operación selecciona **Try it out**,
 rellena los campos y pulsa **Execute**. Detén el servidor con `Ctrl+C`.
@@ -124,29 +130,29 @@ Respuestas: `201` al crear, `204` al borrar, `404` si el recurso no existe,
 - Las reservas y la ocupación se guardan en una única transacción. SQLite serializa
   las transacciones y una clave compuesta impide repetir una butaca en una sesión.
 
-La base se crea en `data/cine.db` y está excluida de Git. Puedes configurar otra
+La base se crea en `backend/data/cine.db` y está excluida de Git. Puedes configurar otra
 ruta SQLite con la variable `DATABASE_URL`, por ejemplo `sqlite:///data/prueba.db`.
 Las fechas usan la hora local del servidor; configura el equipo con la hora del cine.
 
 Para reutilizar la lógica original, el adaptador carga el catálogo completo en un
 `CineService` por transacción. Es una implementación para la primera prueba con pocos
 datos; para mayor volumen convendrá consultar únicamente los registros necesarios.
-La demostración independiente `python -m cine.main` sigue usando memoria y no modifica
+La demostración independiente `python -m cine.main`, desde `backend/`, sigue usando memoria y no modifica
 la base de la API.
 
 ## Estructura
 
 ```text
-app/
-  main.py           Aplicación, endpoints y errores HTTP
-  schemas.py        Validación de entradas y respuestas
-  dependencies.py   Servicio y transacción por petición
-  database.py       Conexión, configuración y arranque de SQLite
-  models.py         Tablas SQLAlchemy
-  crud.py           Adaptador de persistencia del dominio
-cine/
-  models/           Clases originales del cine
-  services/         CineService y errores de negocio
-  main.py           Demostración manual independiente
-requirements.txt    Dependencias con versiones fijadas
+backend/
+  app/                 Aplicación FastAPI, endpoints, esquemas y persistencia
+  cine/                Modelos y reglas de negocio del cine
+  data/                Base SQLite local (ignorada por Git)
+  requirements.txt     Dependencias con versiones fijadas
+frontend/
+  .gitkeep             Mantiene la carpeta en Git hasta crear la interfaz
+README.md
+.gitignore
 ```
+
+Los endpoints están en `backend/app/main.py`. La carpeta `frontend/` está
+preparada para desarrollar la interfaz más adelante.
