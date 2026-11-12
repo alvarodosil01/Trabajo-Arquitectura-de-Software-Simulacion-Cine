@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Cine · Reserva de entradas</title>
+  <meta name="description" content="Cartelera, sesiones y reserva de butacas de Web Cine.">
+  <meta name="theme-color" content="#0d0e13">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f5b942'/%3E%3Cpath d='M12 9l12 7-12 7z' fill='%230d0e13'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="config.js"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#/" aria-label="Web Cine, ir a la cartelera">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Web&nbsp;Cine</span>
+      </a>
+      <nav aria-label="Principal">
+        <a href="#/" data-route="cartelera">Cartelera</a>
+        <a href="#/reservas" data-route="reservas">Mis reservas</a>
+        <a href="#/gestion" data-route="gestion">Gestión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>Web Cine · Proyecto de Arquitectura del Software (UIE)</span>
+      <a href="/api/docs" target="_blank" rel="noopener">Documentación de la API</a>
+    </div>
+  </footer>
+
+  <div id="toasts" role="status" aria-live="polite"></div>
+  <noscript><p style="padding:2rem;text-align:center">Esta aplicación necesita JavaScript para funcionar.</p></noscript>
+</body>
+</html>
