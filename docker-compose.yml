@@ -1,4 +1,5 @@
 # Arranque: docker compose up --build
+# Interfaz web: http://localhost:8080
 # Documentación de la API: http://localhost:8000/docs
 #
 # Los secretos se leen de backend/.env (copia backend/.env.example y rellénalo).
@@ -27,7 +28,18 @@ services:
       - cine-data:/app/data
     restart: unless-stopped
 
-  # Cuando exista el frontend se añadirá aquí como otro servicio (por ejemplo, nginx).
+  # Frontend: ficheros estáticos con nginx. Reenvía /api/ al backend (ver frontend/nginx.conf).
+  # Interfaz en http://localhost:8080
+  frontend:
+    build:
+      context: ./frontend
+    image: cine-frontend
+    container_name: cine-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 volumes:
   cine-data:
