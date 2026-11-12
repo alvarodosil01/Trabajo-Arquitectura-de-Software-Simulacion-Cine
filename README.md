@@ -10,7 +10,7 @@ Entrega: 11/12/2026, 14:59.
 
 API REST con FastAPI, Pydantic 2 y SQLite mediante SQLAlchemy, basada en el ejemplo
 `fast-api-uie-main` y en los modelos y reglas de nuestro `CineService`.
-Esta versión no incluye autenticación JWT ni frontend. Las operaciones de gestión
+Esta versión no incluye autenticación JWT. Las operaciones de gestión
 están disponibles sin iniciar sesión para esta primera prueba local.
 
 ## Instalación y ejecución en Windows
@@ -64,6 +64,27 @@ La API queda en **http://localhost:8000/docs**. Para pararla, `Ctrl+C` o
   de Python y la base local.
 
 Para borrar también los datos guardados: `docker compose down -v`.
+
+## Frontend
+
+Interfaz web en HTML, CSS y JavaScript nativo (sin dependencias ni paso de compilación) en `frontend/`.
+
+- **Cartelera** con buscador y filtro por género, y próxima sesión destacada.
+- **Película**: sesiones futuras agrupadas por día, con butacas libres.
+- **Reserva**: mapa de butacas de la sala (accesible con teclado), total en directo y datos del cliente.
+  Si otra persona ocupa una butaca mientras eliges, se actualiza el mapa y se avisa.
+- **Entrada** con código de reserva, imprimible, y **Mis reservas** por email.
+- **Gestión**: alta, edición y borrado de películas y sesiones, y consulta de salas, con los errores de la API (`409`, `422`) mostrados en pantalla.
+
+Con Docker (backend y frontend a la vez): `docker compose up --build` y abre **http://localhost:8080**.
+
+Sin Docker, con el backend ya arrancado en el puerto 8000, desde `frontend/`:
+
+```powershell
+py -3.12 serve.py
+```
+
+y abre **http://127.0.0.1:8080**. `serve.py` sirve la web y reenvía `/api/` al backend (como nginx en Docker), así que no hace falta configurar CORS. La URL de la API se cambia en `frontend/config.js`.
 
 ## Primera prueba manual
 
@@ -180,11 +201,14 @@ backend/
   Dockerfile           Imagen del backend
   .dockerignore        Archivos excluidos de la imagen
 frontend/
-  .gitkeep             Mantiene la carpeta en Git hasta crear la interfaz
-docker-compose.yml     Arranque del backend con su volumen de datos
+  index.html, config.js  Página única y configuración de la URL de la API
+  js/                    Enrutador, cliente de la API y pantallas (views/)
+  css/styles.css         Estilos
+  nginx.conf, Dockerfile Imagen del frontend (nginx)
+  serve.py               Servidor local sin Docker
+docker-compose.yml     Arranque de backend y frontend
 README.md
 .gitignore
 ```
 
-Los endpoints están en `backend/app/main.py`. La carpeta `frontend/` está
-preparada para desarrollar la interfaz más adelante.
+Los endpoints están en `backend/app/main.py`.
